@@ -23,7 +23,6 @@ class AuthenticationHandler: NSObject {
     /// - Parameters:
     ///   - dictionary: {\"username\": \"account@domain.com\", \"password\": \"********\"}
     ///   - completionBlock: return block with success and response.
-    
     func authenticate(dictionary: [String: String], completionBlock: Constants.CompletionBlock?) {
         if let  url = URL(string: sessionUrl) {
             var request = URLRequest(url: url)
@@ -36,6 +35,49 @@ class AuthenticationHandler: NSObject {
             }
             request.httpBody = authData.data(using: .utf8)
             let session = URLSession.shared
+            let task = session.dataTask(with: request) { [weak self] data, response, error in
+                var string : String?
+                var success = false
+                
+                let range = Range(5..<data!.count)
+                let newData = data?.subdata(in: range)
+                
+                do {
+                    let json = try JSONSerialization.jsonObject(with: newData!, options: .allowFragments) as? [String: AnyHashable]
+                    string = String(data: newData!, encoding: .utf8)!
+                    success = self?.isSuccessFull(dict: json) ?? false
+                } catch {
+                    print("cannot parse response")
+                }
+                
+                completionBlock?(success, string as AnyObject, error)
+            }
+            task.resume()
+        } else {
+            completionBlock?(false, nil, nil)
+        }
+    }
+    
+    private func isSuccessFull(dict: [AnyHashable : Any]?) -> Bool{
+        guard let _ = dict?["error"] else {
+            return true
+        }
+        return false
+    }
+    
+    func deAuthenticate(completionBlock: Constants.CompletionBlock?) {
+        if let  url = URL(string: sessionUrl) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "DELETE"
+            var xsrfCookie: HTTPCookie? = nil
+            let sharedCookieStorage = HTTPCookieStorage.shared
+            for cookie in sharedCookieStorage.cookies! {
+                if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+            }
+            if let xsrfCookie = xsrfCookie {
+                request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+            }
+            let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 var string : String?
                 let success = error == nil
@@ -43,16 +85,13 @@ class AuthenticationHandler: NSObject {
                     let range = Range(5..<data!.count)
                     let newData = data?.subdata(in: range) /* subset response data! */
                     string = String(data: newData!, encoding: .utf8)!
-                    print(string)
+                    print(string!)
                 }
                 completionBlock?(success, string as AnyObject, error)
             }
             task.resume()
+        } else {
+            completionBlock?(false, nil, nil)
         }
     }
-    
-    func deAuthenticate() {
-        
-    }
-
 }

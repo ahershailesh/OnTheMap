@@ -17,6 +17,11 @@
 		8A20F09E200A83F300D3F3FD /* AuthenticationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F09D200A83F300D3F3FD /* AuthenticationHandler.swift */; };
 		8A20F0A0200A853000D3F3FD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F09F200A853000D3F3FD /* Constants.swift */; };
 		8A20F0A2200A8CF900D3F3FD /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F0A1200A8CF900D3F3FD /* Extensions.swift */; };
+		8A20F0A4200AA2D000D3F3FD /* StudentListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F0A3200AA2D000D3F3FD /* StudentListViewController.swift */; };
+		8A20F0A6200AA3B600D3F3FD /* Student.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F0A5200AA3B600D3F3FD /* Student.swift */; };
+		8A20F0A9200AA5F800D3F3FD /* StudentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F0A7200AA5F800D3F3FD /* StudentTableViewCell.swift */; };
+		8A20F0AA200AA5F800D3F3FD /* StudentTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8A20F0A8200AA5F800D3F3FD /* StudentTableViewCell.xib */; };
+		8A20F0AC200B8D2B00D3F3FD /* StudentLocationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20F0AB200B8D2B00D3F3FD /* StudentLocationHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +37,11 @@
 		8A20F09D200A83F300D3F3FD /* AuthenticationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationHandler.swift; sourceTree = "<group>"; };
 		8A20F09F200A853000D3F3FD /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8A20F0A1200A8CF900D3F3FD /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		8A20F0A3200AA2D000D3F3FD /* StudentListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentListViewController.swift; sourceTree = "<group>"; };
+		8A20F0A5200AA3B600D3F3FD /* Student.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Student.swift; sourceTree = "<group>"; };
+		8A20F0A7200AA5F800D3F3FD /* StudentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentTableViewCell.swift; sourceTree = "<group>"; };
+		8A20F0A8200AA5F800D3F3FD /* StudentTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StudentTableViewCell.xib; sourceTree = "<group>"; };
+		8A20F0AB200B8D2B00D3F3FD /* StudentLocationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentLocationHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +85,11 @@
 				8A20F08C200A4F1B00D3F3FD /* Assets.xcassets */,
 				8A20F08E200A4F1B00D3F3FD /* LaunchScreen.storyboard */,
 				8A20F091200A4F1B00D3F3FD /* Info.plist */,
+				8A20F0A5200AA3B600D3F3FD /* Student.swift */,
+				8A20F0A7200AA5F800D3F3FD /* StudentTableViewCell.swift */,
+				8A20F0A8200AA5F800D3F3FD /* StudentTableViewCell.xib */,
+				8A20F0AB200B8D2B00D3F3FD /* StudentLocationHandler.swift */,
+				8A20F0A3200AA2D000D3F3FD /* StudentListViewController.swift */,
 			);
 			path = OnTheMap;
 			sourceTree = "<group>";
@@ -141,6 +156,7 @@
 				8A20F090200A4F1B00D3F3FD /* LaunchScreen.storyboard in Resources */,
 				8A20F08D200A4F1B00D3F3FD /* Assets.xcassets in Resources */,
 				8A20F08B200A4F1B00D3F3FD /* Main.storyboard in Resources */,
+				8A20F0AA200AA5F800D3F3FD /* StudentTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,8 +168,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A20F098200A526500D3F3FD /* LoginViewController.swift in Sources */,
+				8A20F0A9200AA5F800D3F3FD /* StudentTableViewCell.swift in Sources */,
 				8A20F088200A4F1B00D3F3FD /* MapViewController.swift in Sources */,
 				8A20F09C200A835100D3F3FD /* ParseHandler.swift in Sources */,
+				8A20F0AC200B8D2B00D3F3FD /* StudentLocationHandler.swift in Sources */,
+				8A20F0A4200AA2D000D3F3FD /* StudentListViewController.swift in Sources */,
+				8A20F0A6200AA3B600D3F3FD /* Student.swift in Sources */,
 				8A20F0A0200A853000D3F3FD /* Constants.swift in Sources */,
 				8A20F09E200A83F300D3F3FD /* AuthenticationHandler.swift in Sources */,
 				8A20F086200A4F1B00D3F3FD /* AppDelegate.swift in Sources */,

@@ -10,7 +10,7 @@ import UIKit
 
 class LoginViewController : UIViewController, UITextFieldDelegate {
     
-    let LOGIN_FAILED_MESSAGE = "Username or password is incorrent, login failed"
+    let LOGIN_FAILED_MESSAGE = "Username or password is incorrect, login failed"
     var isMoved = false
     let moveOffset : CGFloat = 10
     
@@ -22,11 +22,14 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
     @IBAction func loginButtonTapped(_ sender: Any) {
         userNameTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
+        moveTextDown()
         let dictionary = ["username" : userNameTextField.text!,
                           "password" : passwordTextField.text!]
         
-        AuthenticationHandler.shared.authenticate(dictionary: dictionary) { [weak self] (success, response, _) in
-            self?.login(success: success)
+        AuthenticationHandler.shared.authenticate(dictionary: dictionary) {(success, response, _) in
+             mainThread {
+                self.login(success: success)
+            }
         }
     }
     
@@ -37,19 +40,18 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
     }
     
     private func login(success: Bool) {
-        mainThread { [weak self] in
             if success {
-                self?.moveToMapView()
+                moveToStudentList()
             } else {
-                self?.messageLabel.text = self?.LOGIN_FAILED_MESSAGE
+                messageLabel.text = LOGIN_FAILED_MESSAGE
             }
-        }
     }
     
-    private func moveToMapView() {
+    private func moveToStudentList() {
         
-        if let controller = storyboard?.instantiateViewController(withIdentifier: "MapViewController") {
-            present(controller, animated: true, completion: nil)
+        if let controller = storyboard?.instantiateViewController(withIdentifier: "StudentListViewController") {
+            let navigationController = UINavigationController(rootViewController: controller)
+            present(navigationController, animated: true, completion: nil)
         }
     }
     
@@ -71,31 +73,10 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
         }
         isMoved = false
     }
-    
-//    private func failedAnimation() {
-//        let currentUserNameFieldFrame = userNameTextField.frame
-//        let currentPasswordFieldFrame = passwordTextField.frame
-//
-//
-//
-//    }
-//
-//    private func leftDisplacedAnim(textField: UITextField, callBack: Constants.VoidBlock?) {
-//        let leftFrame = CGRect(origin: CGPoint(x: -5, y: 0), size: CGSize.zero)
-//        UIView.animate(withDuration: 0.2, animations: {
-//            textField.frame = textField.frame + leftFrame
-//        }) { (_) in
-//            callBack?()
-//        }
-//    }
 }
 
 extension LoginViewController {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         moveTextFieldsUp()
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        moveTextDown()
     }
 }
