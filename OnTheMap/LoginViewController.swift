@@ -29,6 +29,9 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
         AuthenticationHandler.shared.authenticate(dictionary: dictionary) {(success, response, _) in
              mainThread {
                 self.login(success: success)
+                if let json = response as? [String: [String : Any]] {
+                    appDelegate.loggedInStudent.uniqueKey = json["account"]?["key"] as? String ?? ""
+                }
             }
         }
     }

@@ -71,3 +71,13 @@ extension String {
         return "\(char)"
     }
 }
+
+extension UIView {
+    func registerForKeyboardDisplacement() {
+        appDelegate.registerViewForKeyboardNotification(view: self)
+    }
+    
+    func unRegisterForKeyboardDisplacement() {
+        appDelegate.unRegisterViewForKeyboardNotification(view: self)
+    }
+}

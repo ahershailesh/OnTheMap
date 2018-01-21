@@ -25,12 +25,17 @@ class StudentListViewController: UIViewController {
         tableView.delegate = self
         navigationItem.title = "Students"
         
-        let postLocation = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(postLocationPopup))
+        let postLocation = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postLocationPopup))
         navigationItem.rightBarButtonItem = postLocation
     }
     
     @objc private func postLocationPopup() {
-        
+        if let controller = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as? MapSearchViewController{
+            let navC = UINavigationController(rootViewController: controller)
+            navigationController?.present(navC, animated: true, completion: {
+                controller.checkWithPreviousLocations()
+            })
+        }
     }
     
     private func register() {

@@ -47,4 +47,47 @@ class ParseHandler: NSObject {
         }
     }
     
+    func postLocation(paramDict: [AnyHashable: Any], completionBlock: Constants.CompletionBlock?) {
+        if let url = URL(string: serverUrl) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(applicationId, forHTTPHeaderField: "X-Parse-Application-Id")
+            request.addValue(parseKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+            request.httpBody = paramDict.json()?.data(using: .utf8)
+            let session = URLSession.shared
+            let task = session.dataTask(with: request) { data, response, error in
+                let success =  error == nil
+                if success {
+                    if let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any] {
+                        print(json)
+                    }
+                }
+                completionBlock?(success, nil, error)
+            }
+            task.resume()
+        }
+    }
+    
+    func getStudentLocation(dict: [String: String], completionBlock: Constants.CompletionBlock?) {
+        let pathParam = "?where=" + (dict.json()?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "")
+        let finalUrl = serverUrl + pathParam
+        if let url = URL(string: finalUrl) {
+            var request = URLRequest(url: url)
+            request.addValue(applicationId, forHTTPHeaderField: "X-Parse-Application-Id")
+            request.addValue(parseKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+            let session = URLSession.shared
+            let task = session.dataTask(with: request) { data, response, error in
+                let success =  error == nil
+                if success {
+                    if let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any] {
+                        print(json)
+                        completionBlock?(success, json?["results"], error)
+                    }
+                }
+                print(String(data: data!, encoding: .utf8)!)
+            }
+            task.resume()
+        }
+    }
 }

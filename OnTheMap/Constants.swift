@@ -13,3 +13,5 @@ struct Constants {
     typealias VoidBlock = (() -> Void)
     
 }
+
+let appDelegate = UIApplication.shared.delegate as! AppDelegate

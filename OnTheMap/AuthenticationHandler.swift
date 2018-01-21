@@ -36,21 +36,20 @@ class AuthenticationHandler: NSObject {
             request.httpBody = authData.data(using: .utf8)
             let session = URLSession.shared
             let task = session.dataTask(with: request) { [weak self] data, response, error in
-                var string : String?
                 var success = false
                 
                 let range = Range(5..<data!.count)
                 let newData = data?.subdata(in: range)
                 
                 do {
-                    let json = try JSONSerialization.jsonObject(with: newData!, options: .allowFragments) as? [String: AnyHashable]
-                    string = String(data: newData!, encoding: .utf8)!
+                    let json = try JSONSerialization.jsonObject(with: newData!, options: .allowFragments) as? [AnyHashable : Any]
+                    print(json)
                     success = self?.isSuccessFull(dict: json) ?? false
+                    completionBlock?(success, json, error)
                 } catch {
                     print("cannot parse response")
                 }
                 
-                completionBlock?(success, string as AnyObject, error)
             }
             task.resume()
         } else {
