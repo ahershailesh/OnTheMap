@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 
 class MapSearchViewController: MapViewController {
     
@@ -139,7 +140,25 @@ class MapSearchViewController: MapViewController {
     
     //MARK:- App functionality
     private func searchLocation(text: String) {
+        let request = MKLocalSearchRequest()
+        request.naturalLanguageQuery = text
+        request.region = mapView.region
+        
+        let search = MKLocalSearch(request: request)
+        search.start { (response, error) in
+            if let array = response?.mapItems {
+                var pointAnnotation = [MKPointAnnotation]()
+                for item in array {
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = item.placemark.coordinate
+                    pointAnnotation.append(annotation)
+                }
+                self.mapView.showAnnotations(pointAnnotation, animated: true)
+            }
+        }
+        
         showNextButton()
+        
     }
     
     private func postLocation() {
