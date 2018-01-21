@@ -13,10 +13,15 @@ class ParseHandler: NSObject {
     static let shared = ParseHandler()
     
     private let url = "https://parse.udacity.com"
+    private let udacityUrl = "https://www.udacity.com"
     let applicationId = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
     let parseKey = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
     var serverUrl : String {
         return url + "/parse/classes/StudentLocation"
+    }
+    
+    var userUrl : String {
+        return udacityUrl + "/api/users/"
     }
     
     func getStudentList(completionBlock: Constants.CompletionBlock?) {
@@ -83,6 +88,27 @@ class ParseHandler: NSObject {
                     if let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any] {
                         print(json)
                         completionBlock?(success, json?["results"], error)
+                    }
+                }
+                print(String(data: data!, encoding: .utf8)!)
+            }
+            task.resume()
+        }
+    }
+    
+    func getStudentInfo(uniqueKey : String, completionBlock: Constants.CompletionBlock?) {
+        if let url = URL(string: userUrl + uniqueKey) {
+            var request = URLRequest(url: url)
+            request.addValue(applicationId, forHTTPHeaderField: "X-Parse-Application-Id")
+            request.addValue(parseKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+            let session = URLSession.shared
+            let task = session.dataTask(with: request) { data, response, error in
+                let success =  error == nil
+                let range = Range(5..<data!.count)
+                let newData = data?.subdata(in: range)
+                if success {
+                    if let json = try? JSONSerialization.jsonObject(with: newData!, options: .allowFragments) as? [String: Any] {
+                        completionBlock?(success, json?["user"], error)
                     }
                 }
                 print(String(data: data!, encoding: .utf8)!)

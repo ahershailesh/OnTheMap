@@ -134,6 +134,7 @@ class MapSearchViewController: MapViewController {
     }
     
     @objc private func submitButtonTapped() {
+        postLocation()
         dismissCurrentController()
     }
     
@@ -162,7 +163,16 @@ class MapSearchViewController: MapViewController {
     }
     
     private func postLocation() {
-        
+        let uniqueKey = appDelegate.loggedInStudent.uniqueKey ?? ""
+        ParseHandler.shared.getStudentInfo(uniqueKey: uniqueKey) { (success, response, _) in
+            mainThread {
+                if let dict = response as? [String: Any] {
+                    appDelegate.loggedInStudent.lastName = dict["last_name"]
+                    appDelegate.loggedInStudent.firstName = dict["first_name"]
+                }
+                
+            }
+        }
     }
 }
 
@@ -183,9 +193,5 @@ extension MapSearchViewController: UITextViewDelegate {
         if textView.text == TEXTFIELD_PLACEHOLDER {
             textView.text = ""
         }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        postLocation()
     }
 }
