@@ -19,6 +19,10 @@ class StudentListViewController: UIViewController {
         getStudentList()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        tableView.reloadData()
+    }
+    
     private func setUI() {
         register()
         tableView.dataSource = self

@@ -24,6 +24,9 @@ class MapSearchViewController: MapViewController {
         
         searchTextField.isHidden = true
         detailTextField.isHidden = true
+        
+        detailTextField.autocorrectionType = .no
+        detailTextField.autocapitalizationType = .none
     }
     
     //MARK:- Add Dynamic Views
@@ -46,7 +49,16 @@ class MapSearchViewController: MapViewController {
         let uniqueKey = appDelegate.loggedInStudent.uniqueKey ?? ""
         ParseHandler.shared.getStudentLocation(dict: ["uniqueKey" : uniqueKey]) { (suceess, response, _) in
             if let responseArray = response as? [Any] {
-                responseArray.isEmpty ? self.addSearchView() : self.showAlert()
+                if responseArray.isEmpty {
+                   self.addSearchView()
+                } else {
+                    self.showAlert()
+                    if let location = responseArray.first as? [String: String] {
+                        let objectId = location["objectId"]
+                        appDelegate.loggedInStudent.objectId = objectId
+                    }
+                }
+                
             }
         }
     }
@@ -134,19 +146,22 @@ class MapSearchViewController: MapViewController {
     }
     
     @objc private func submitButtonTapped() {
-        postLocation()
+        appDelegate.loggedInStudent.mediaURL = detailTextField.text
+        preparePostLocationData()
         dismissCurrentController()
     }
     
     
     //MARK:- App functionality
     private func searchLocation(text: String) {
+        appDelegate.loggedInStudent.mapString = text
+        
         let request = MKLocalSearchRequest()
         request.naturalLanguageQuery = text
         request.region = mapView.region
         
         let search = MKLocalSearch(request: request)
-        search.start { (response, error) in
+        search.start { [weak self] (response, error) in
             if let array = response?.mapItems {
                 var pointAnnotation = [MKPointAnnotation]()
                 for item in array {
@@ -154,25 +169,60 @@ class MapSearchViewController: MapViewController {
                     annotation.coordinate = item.placemark.coordinate
                     pointAnnotation.append(annotation)
                 }
-                self.mapView.showAnnotations(pointAnnotation, animated: true)
+                self?.saveLocation(coordinate: array.first?.placemark.coordinate ?? kCLLocationCoordinate2DInvalid)
+                self?.mapView.showAnnotations(pointAnnotation, animated: true)
             }
         }
-        
         showNextButton()
-        
     }
     
-    private func postLocation() {
+    private func preparePostLocationData() {
         let uniqueKey = appDelegate.loggedInStudent.uniqueKey ?? ""
         ParseHandler.shared.getStudentInfo(uniqueKey: uniqueKey) { (success, response, _) in
             mainThread {
                 if let dict = response as? [String: Any] {
-                    appDelegate.loggedInStudent.lastName = dict["last_name"]
-                    appDelegate.loggedInStudent.firstName = dict["first_name"]
+                    appDelegate.loggedInStudent.lastName = dict["last_name"] as? String
+                    appDelegate.loggedInStudent.firstName = dict["first_name"] as? String
+                    if let objectId = appDelegate.loggedInStudent.objectId {
+                        self.updateLocation(objectId: objectId, student: appDelegate.loggedInStudent)
+                    } else {
+                        self.postLocation(student: appDelegate.loggedInStudent)
+                    }
                 }
-                
             }
         }
+    }
+    
+    private func postLocation(student: Student) {
+        let dict = getParamDictionary(student: student)
+        ParseHandler.shared.postLocation(paramDict: dict) { (success, response, _) in
+            if success, let objectId = response as? String {
+                appDelegate.loggedInStudent.objectId = objectId
+            }
+        }
+    }
+    
+    private func updateLocation(objectId : String, student: Student) {
+         let dict = getParamDictionary(student: student)
+        ParseHandler.shared.updateLocation(objectId: objectId, paramDict: dict) { (success, response, _) in
+            
+        }
+    }
+    
+    private func getParamDictionary(student: Student) -> [String: Any] {
+        let dict : [String: Any] = ["uniqueKey" :   student.uniqueKey ?? "",
+                                       "firstName" :   student.firstName ?? "",
+                                       "lastName"  :   student.lastName ?? "",
+                                       "mapString" :   student.mapString ?? "",
+                                       "mediaURL"  :   student.mediaURL ?? "",
+                                       "latitude"  :   student.latitude ?? 0,
+                                       "longitude" :   student.longitude ?? 0]
+        return dict
+    }
+    
+    private func saveLocation(coordinate: CLLocationCoordinate2D) {
+        appDelegate.loggedInStudent.latitude = coordinate.latitude as NSNumber
+        appDelegate.loggedInStudent.longitude = coordinate.longitude as NSNumber
     }
 }
 

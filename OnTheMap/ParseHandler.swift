@@ -63,6 +63,26 @@ class ParseHandler: NSObject {
             let session = URLSession.shared
             let task = session.dataTask(with: request) { data, response, error in
                 let success =  error == nil
+                let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any]
+                print(json)
+                completionBlock?(success, json??["objectId"], error)
+            }
+            task.resume()
+        }
+    }
+    
+    func updateLocation(objectId: String, paramDict: [AnyHashable: Any], completionBlock: Constants.CompletionBlock?) {
+        let finalUrl = serverUrl + "/" + objectId
+        if let url = URL(string: finalUrl) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "PUT"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(applicationId, forHTTPHeaderField: "X-Parse-Application-Id")
+            request.addValue(parseKey, forHTTPHeaderField: "X-Parse-REST-API-Key")
+            request.httpBody = paramDict.json()?.data(using: .utf8)
+            let session = URLSession.shared
+            let task = session.dataTask(with: request) { data, response, error in
+                let success =  error == nil
                 if success {
                     if let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any] {
                         print(json)
