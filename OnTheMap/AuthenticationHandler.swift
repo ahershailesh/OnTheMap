@@ -24,6 +24,7 @@ class AuthenticationHandler: NSObject {
     ///   - dictionary: {\"username\": \"account@domain.com\", \"password\": \"********\"}
     ///   - completionBlock: return block with success and response.
     func authenticate(dictionary: [String: String], completionBlock: Constants.CompletionBlock?) {
+        appDelegate.showLoading()
         if let  url = URL(string: sessionUrl) {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -49,7 +50,7 @@ class AuthenticationHandler: NSObject {
                 } catch {
                     print("cannot parse response")
                 }
-                
+                appDelegate.hideLoading()
             }
             task.resume()
         } else {

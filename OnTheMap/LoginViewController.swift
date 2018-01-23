@@ -42,6 +42,10 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
         passwordTextField.delegate = self
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        passwordTextField.text = ""
+    }
+    
     private func login(success: Bool) {
             if success {
                 moveToStudentList()

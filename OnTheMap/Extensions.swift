@@ -10,8 +10,12 @@ import UIKit
 import MapKit
 
 func mainThread(block : Constants.VoidBlock?) {
-    DispatchQueue.main.sync {
+    if Thread.isMainThread {
         block?()
+    } else {
+        DispatchQueue.main.sync {
+            block?()
+        }
     }
 }
 
@@ -69,15 +73,5 @@ extension String {
             return ""
         }
         return "\(char)"
-    }
-}
-
-extension UIView {
-    func registerForKeyboardDisplacement() {
-        appDelegate.registerViewForKeyboardNotification(view: self)
-    }
-    
-    func unRegisterForKeyboardDisplacement() {
-        appDelegate.unRegisterViewForKeyboardNotification(view: self)
     }
 }

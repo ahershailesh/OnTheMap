@@ -31,6 +31,9 @@ class StudentListViewController: UIViewController {
         
         let postLocation = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postLocationPopup))
         navigationItem.rightBarButtonItem = postLocation
+        
+        let logoutButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(logout))
+        navigationItem.leftBarButtonItem = logoutButton
     }
     
     @objc private func postLocationPopup() {
@@ -52,6 +55,13 @@ class StudentListViewController: UIViewController {
                 self?.studentsArray = list
                 self?.reloadData()
             }
+        }
+    }
+    
+    @objc private func logout() {
+        AuthenticationHandler.shared.deAuthenticate { [weak self] (success, _, _) in
+            appDelegate.loggedInStudent.objectId = nil
+            self?.dismiss(animated: true, completion: nil)
         }
     }
     

@@ -25,6 +25,7 @@ class ParseHandler: NSObject {
     }
     
     func getStudentList(completionBlock: Constants.CompletionBlock?) {
+        appDelegate.showLoading()
         if let url = URL(string: serverUrl) {
             var request = URLRequest(url: url)
             request.addValue(applicationId, forHTTPHeaderField: "X-Parse-Application-Id")
@@ -46,6 +47,7 @@ class ParseHandler: NSObject {
                         }
                     }
                 }
+                appDelegate.hideLoading()
                 completionBlock?(success, studentList, error)
             }
             task.resume()
@@ -53,6 +55,7 @@ class ParseHandler: NSObject {
     }
     
     func postLocation(paramDict: [AnyHashable: Any], completionBlock: Constants.CompletionBlock?) {
+        appDelegate.showLoading()
         if let url = URL(string: serverUrl) {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -66,12 +69,14 @@ class ParseHandler: NSObject {
                 let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as? [String: Any]
                 print(json)
                 completionBlock?(success, json??["objectId"], error)
+                appDelegate.hideLoading()
             }
             task.resume()
         }
     }
     
     func updateLocation(objectId: String, paramDict: [AnyHashable: Any], completionBlock: Constants.CompletionBlock?) {
+        appDelegate.showLoading()
         let finalUrl = serverUrl + "/" + objectId
         if let url = URL(string: finalUrl) {
             var request = URLRequest(url: url)
@@ -89,12 +94,14 @@ class ParseHandler: NSObject {
                     }
                 }
                 completionBlock?(success, nil, error)
+                appDelegate.hideLoading()
             }
             task.resume()
         }
     }
     
     func getStudentLocation(dict: [String: String], completionBlock: Constants.CompletionBlock?) {
+        appDelegate.showLoading()
         let pathParam = "?where=" + (dict.json()?.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "")
         let finalUrl = serverUrl + pathParam
         if let url = URL(string: finalUrl) {
@@ -111,12 +118,14 @@ class ParseHandler: NSObject {
                     }
                 }
                 print(String(data: data!, encoding: .utf8)!)
+                appDelegate.hideLoading()
             }
             task.resume()
         }
     }
     
     func getStudentInfo(uniqueKey : String, completionBlock: Constants.CompletionBlock?) {
+        appDelegate.showLoading()
         if let url = URL(string: userUrl + uniqueKey) {
             var request = URLRequest(url: url)
             request.addValue(applicationId, forHTTPHeaderField: "X-Parse-Application-Id")
@@ -132,6 +141,7 @@ class ParseHandler: NSObject {
                     }
                 }
                 print(String(data: data!, encoding: .utf8)!)
+                appDelegate.hideLoading()
             }
             task.resume()
         }

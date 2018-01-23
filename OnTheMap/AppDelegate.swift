@@ -12,16 +12,15 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let loadingWindow = UIWindow(frame: UIScreen.main.bounds)
     var keyBoardNotificationViewArray = [UIView]()
     var loggedInStudent = Student()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        addProgressBar()
         return true
     }
-
+    
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -46,29 +45,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate {
-    func registerViewForKeyboardNotification(view: UIView) {
-        keyBoardNotificationViewArray.append(view)
-    }
-    
-    func unRegisterViewForKeyboardNotification(view: UIView) {
-        if let index = keyBoardNotificationViewArray.index(of: view) {
-            keyBoardNotificationViewArray.remove(at: index)
+    func showLoading() {
+        mainThread { [weak self] in
+            let thisWindow = UIWindow(frame: UIScreen.main.bounds)
+            self?.window?.addSubview(thisWindow)
+            self?.loadingWindow.makeKeyAndVisible()
+            self?.loadingWindow.windowLevel = self?.window?.windowLevel.advanced(by: +1.0) ?? .leastNormalMagnitude
         }
     }
     
-    @objc func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            for view in keyBoardNotificationViewArray {
-                view.frame.origin.y -= keyboardSize.height
-            }
+    func hideLoading() {
+        mainThread { [weak self] in
+            self?.loadingWindow.removeFromSuperview()
+            self?.loadingWindow.resignKey()
+            self?.loadingWindow.windowLevel = self?.window?.windowLevel.advanced(by: -1.0) ?? .leastNormalMagnitude
         }
     }
     
-    @objc func keyboardWillHide(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-            for view in keyBoardNotificationViewArray {
-                view.frame.origin.y += keyboardSize.height
-            }
-        }
+    private func addProgressBar() {
+        let HEIGHT_WIDTH : CGFloat = 72
+        let progressBar = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: HEIGHT_WIDTH, height: HEIGHT_WIDTH))
+        loadingWindow.addSubview(progressBar)
+        progressBar.center = loadingWindow.center
+        progressBar.color = UIColor.black
+        
+//        progressBar.translatesAutoresizingMaskIntoConstraints = false
+//
+//        var constrain : NSLayoutConstraint
+//        constrain = NSLayoutConstraint(item: progressBar, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: HEIGHT_WIDTH)
+//        loadingWindow.addConstraint(constrain)
+//
+//        constrain = NSLayoutConstraint(item: progressBar, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: HEIGHT_WIDTH)
+//        loadingWindow.addConstraint(constrain)
+//
+//        loadingWindow.frame = window?.frame ?? CGRect.zero
+//
+//        progressBar.center = loadingWindow.center
+        progressBar.startAnimating()
     }
 }
