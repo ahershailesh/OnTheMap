@@ -12,15 +12,17 @@ class StudentListViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     var studentsArray = [Student]()
+    let handler = StudentLocationHandler.shared
     
     let studentCell = "StudentTableViewCell"
     override func viewDidLoad() {
         setUI()
-        getStudentList()
+        handler.delegate = self
+        handler.refresh()
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        tableView.reloadData()
+        handler.refresh()
     }
     
     private func setUI() {
@@ -49,15 +51,6 @@ class StudentListViewController: UIViewController {
         tableView.register(UINib(nibName: studentCell, bundle: nil), forCellReuseIdentifier: studentCell)
     }
 
-    private func getStudentList() {
-        ParseHandler.shared.getStudentList { [weak self] (success, response, _) in
-            if success, let list = response as? [Student] {
-                self?.studentsArray = list
-                self?.reloadData()
-            }
-        }
-    }
-    
     @objc private func logout() {
         AuthenticationHandler.shared.deAuthenticate { [weak self] (success, _, _) in
             appDelegate.loggedInStudent.objectId = nil
@@ -76,7 +69,6 @@ class StudentListViewController: UIViewController {
 extension StudentListViewController : LocationDelegate {
     
     func studentLocationListLoaded(studentsInformation: [Student]) {
-        studentsArray = studentsInformation
         reloadData()
     }
 }
@@ -84,12 +76,14 @@ extension StudentListViewController : LocationDelegate {
 extension StudentListViewController : UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return studentsArray.count
+        return handler.studentInformation?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: studentCell) as? StudentTableViewCell{
-            cell.student = studentsArray[indexPath.row]
+            if let item = handler.studentInformation?[indexPath.row] {
+                cell.student = item
+            }
             cell.accessoryType = .disclosureIndicator
             return cell
         }
@@ -101,12 +95,13 @@ extension StudentListViewController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let student = studentsArray[indexPath.row]
-        if let controller = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as? MapViewController{
-            controller.locationBlock = {
-                return student.getAnnotation()
+        if let student = handler.studentInformation?[indexPath.row] {
+            if let controller = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as? MapViewController{
+                controller.locationBlock = {
+                    return student.getAnnotation()
+                }
+                navigationController?.pushViewController(controller, animated: true)
             }
-            navigationController?.pushViewController(controller, animated: true)
         }
     }
 

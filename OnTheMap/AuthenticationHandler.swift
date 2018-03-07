@@ -38,18 +38,19 @@ class AuthenticationHandler: NSObject {
             let session = URLSession.shared
             let task = session.dataTask(with: request) { [weak self] data, response, error in
                 var success = false
-                
-                let range = Range(5..<data!.count)
-                let newData = data?.subdata(in: range)
-                
-                do {
-                    let json = try JSONSerialization.jsonObject(with: newData!, options: .allowFragments) as? [AnyHashable : Any]
-                    print(json)
-                    success = self?.isSuccessFull(dict: json) ?? false
-                    completionBlock?(success, json, error)
-                } catch {
-                    print("cannot parse response")
+                var json: [AnyHashable : Any]?
+                if let thisData = data {
+                    let range = Range(5..<thisData.count)
+                    let newData = thisData.subdata(in: range)
+                    do {
+                        json = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as? [AnyHashable : Any]
+                        print(json)
+                        success = self?.isSuccessFull(dict: json) ?? false
+                    } catch {
+                        print("cannot parse response")
+                    }
                 }
+                completionBlock?(success, json, error)
                 appDelegate.hideLoading()
             }
             task.resume()
