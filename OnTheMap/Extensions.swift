@@ -38,22 +38,6 @@ extension Dictionary {
     }
 }
 
-
-extension NSObject {
-    func map(dictionary: [String: Any]) {
-        let keyArray = propertyNames()
-        for key in keyArray {
-            if let value = dictionary[key] as? String{
-                setValue(value, forKey: key)
-            }
-        }
-    }
-    
-    private func propertyNames() -> [String] {
-        return Mirror(reflecting: self).children.flatMap { $0.label }
-    }
-}
-
 extension UIColor {
     static var random : UIColor {
         let randomNumber = Int(arc4random()) % colorList.count

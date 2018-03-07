@@ -23,10 +23,9 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
         userNameTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
         moveTextDown()
-        let dictionary = ["username" : userNameTextField.text!,
-                          "password" : passwordTextField.text!]
+       
         
-        AuthenticationHandler.shared.authenticate(dictionary: dictionary) {(success, response, error) in
+        AuthenticationHandler.shared.authenticate(username: userNameTextField.text!, password: passwordTextField.text!) {(success, response, error) in
              mainThread {
                 self.login(success: success)
                 if let json = response as? [String: [String : Any]] {

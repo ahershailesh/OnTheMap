@@ -81,14 +81,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 //
 //    // This delegate method is implemented to respond to taps. It opens the system browser
 //    // to the URL specified in the annotationViews subtitle property.
-//    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-//        if control == view.rightCalloutAccessoryView {
-//            let app = UIApplication.shared
-//            if let toOpen = view.annotation?.subtitle! {
-//                app.openURL(URL(string: toOpen)!)
-//            }
-//        }
-//    }
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if control == view.rightCalloutAccessoryView {
+            let app = UIApplication.shared
+            if let toOpen = view.annotation?.subtitle! {
+                app.openURL(URL(string: toOpen)!)
+            }
+        }
+    }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
     {
@@ -99,9 +99,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         return annotationView
     }
     
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        if let urlString = view.annotation?.subtitle, let url = URL(string: urlString!) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-    }
+//    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+//        if let urlString = view.annotation?.subtitle, let url = URL(string: urlString!) {
+//            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+//        }
+//    }
 }

@@ -23,7 +23,9 @@ class AuthenticationHandler: NSObject {
     /// - Parameters:
     ///   - dictionary: {\"username\": \"account@domain.com\", \"password\": \"********\"}
     ///   - completionBlock: return block with success and response.
-    func authenticate(dictionary: [String: String], completionBlock: Constants.CompletionBlock?) {
+    func authenticate(username: String, password: String, completionBlock: Constants.CompletionBlock?) {
+        let dictionary = ["username" : username,
+                          "password" : password]
         appDelegate.showLoading()
         if let  url = URL(string: sessionUrl) {
             var request = URLRequest(url: url)

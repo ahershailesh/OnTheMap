@@ -24,7 +24,7 @@ class ParseHandler: NSObject {
     func getStudentList(completionBlock: Constants.CompletionBlock?) {
         appDelegate.showLoading()
         let urlQuery = serverUrl + "?limit=100/order=-updatedAt"
-        if let url = URL(string: serverUrl) {
+        if let url = URL(string: urlQuery) {
             var request = URLRequest(url: url)
             request.addValue(Constants.applicationId, forHTTPHeaderField: Constants.applicationIdKey)
             request.addValue(Constants.parseKey, forHTTPHeaderField: Constants.parseRestApiKey)
@@ -39,10 +39,7 @@ class ParseHandler: NSObject {
                         studentList = [Student]()
                         for item in array {
                             let dict = item as! [String: Any]
-                            let student = Student()
-                            student.map(dictionary: dict)
-                            student.latitude = dict["latitude"] as? NSNumber
-                            student.longitude = dict["longitude"]  as? NSNumber
+                            let student = Student(dictionary: dict)
                             studentList?.append(student)
                         }
                     } else {

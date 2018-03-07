@@ -9,17 +9,17 @@
 import UIKit
 import MapKit
 
-class Student: NSObject {
-    @objc var createdAt : String?
-    @objc var firstName : String?
-    @objc var lastName : String?
-    @objc var latitude : NSNumber?
-    @objc var longitude : NSNumber?
-    @objc var mapString : String?
-    @objc var mediaURL : String?
-    @objc var objectId : String?
-    @objc var uniqueKey : String?
-    @objc var updatedAt : String?
+struct Student {
+    var createdAt : String?
+    var firstName : String?
+    var lastName : String?
+    var latitude : NSNumber?
+    var longitude : NSNumber?
+    var mapString : String?
+    var mediaURL : String?
+    var objectId : String?
+    var uniqueKey : String?
+    var updatedAt : String?
     
     var fullName : String {
         return (firstName ?? "") + " " + (lastName ?? "")
@@ -37,5 +37,29 @@ class Student: NSObject {
         annotation.title = fullName
         annotation.subtitle = mediaURL
         return annotation
+    }
+    
+    func getParamDictionary() -> [String: Any] {
+        let dict : [String: Any] = ["uniqueKey" :   uniqueKey ?? "",
+                                    "firstName" :   firstName ?? "",
+                                    "lastName"  :   lastName ?? "",
+                                    "mapString" :   mapString ?? "",
+                                    "mediaURL"  :   mediaURL ?? "",
+                                    "latitude"  :   latitude ?? 0,
+                                    "longitude" :   longitude ?? 0]
+        return dict
+    }
+    
+    init(dictionary: [String: Any]) {
+        createdAt = dictionary["createdAt"] as? String
+        firstName = dictionary["firstName"] as? String
+        lastName = dictionary["lastName"] as? String
+        latitude = dictionary["latitude"] as? NSNumber
+        longitude = dictionary["longitude"] as? NSNumber
+        mapString = dictionary["mapString"] as? String
+        mediaURL = dictionary["mediaURL"] as? String
+        objectId = dictionary["objectId"] as? String
+        uniqueKey = dictionary["uniqueKey"] as? String
+        updatedAt = dictionary["updatedAt"] as? String
     }
 }

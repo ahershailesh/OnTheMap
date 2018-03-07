@@ -47,7 +47,7 @@ class MapSearchViewController: MapViewController {
     
     func checkWithPreviousLocations() {
         let uniqueKey = appDelegate.loggedInStudent.uniqueKey ?? ""
-        ParseHandler.shared.getStudentLocation(dict: ["uniqueKey" : uniqueKey]) { (suceess, response, _) in
+        ParseHandler.shared.getStudentLocation(dict: ["uniqueKey" : uniqueKey]) { (suceess, response, error) in
             if let responseArray = response as? [Any] {
                 if responseArray.isEmpty {
                    self.addSearchView()
@@ -58,7 +58,8 @@ class MapSearchViewController: MapViewController {
                         appDelegate.loggedInStudent.objectId = objectId
                     }
                 }
-                
+            } else {
+                self.show(error: error)
             }
         }
     }
@@ -171,6 +172,8 @@ class MapSearchViewController: MapViewController {
                 }
                 self?.saveLocation(coordinate: array.first?.placemark.coordinate ?? kCLLocationCoordinate2DInvalid)
                 self?.mapView.showAnnotations(pointAnnotation, animated: true)
+            } else {
+                self?.show(error: error)
             }
         }
         showNextButton()
@@ -194,7 +197,7 @@ class MapSearchViewController: MapViewController {
     }
     
     private func postLocation(student: Student) {
-        let dict = getParamDictionary(student: student)
+        let dict = student.getParamDictionary()
         ParseHandler.shared.postLocation(paramDict: dict) { (success, response, _) in
             if success, let objectId = response as? String {
                 appDelegate.loggedInStudent.objectId = objectId
@@ -203,21 +206,10 @@ class MapSearchViewController: MapViewController {
     }
     
     private func updateLocation(objectId : String, student: Student) {
-         let dict = getParamDictionary(student: student)
+         let dict = student.getParamDictionary()
         ParseHandler.shared.updateLocation(objectId: objectId, paramDict: dict) { (success, response, _) in
             
         }
-    }
-    
-    private func getParamDictionary(student: Student) -> [String: Any] {
-        let dict : [String: Any] = ["uniqueKey" :   student.uniqueKey ?? "",
-                                       "firstName" :   student.firstName ?? "",
-                                       "lastName"  :   student.lastName ?? "",
-                                       "mapString" :   student.mapString ?? "",
-                                       "mediaURL"  :   student.mediaURL ?? "",
-                                       "latitude"  :   student.latitude ?? 0,
-                                       "longitude" :   student.longitude ?? 0]
-        return dict
     }
     
     private func saveLocation(coordinate: CLLocationCoordinate2D) {

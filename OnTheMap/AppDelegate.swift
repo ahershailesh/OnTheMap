@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let loadingWindow = UIWindow(frame: UIScreen.main.bounds)
     var keyBoardNotificationViewArray = [UIView]()
-    var loggedInStudent = Student()
+    var loggedInStudent = Student(dictionary: [:])
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         addProgressBar()
