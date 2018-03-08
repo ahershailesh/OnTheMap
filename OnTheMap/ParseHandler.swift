@@ -23,9 +23,10 @@ class ParseHandler: NSObject {
     
     func getStudentList(completionBlock: Constants.CompletionBlock?) {
         appDelegate.showLoading()
-        let urlQuery = serverUrl + "?limit=100/order=-updatedAt"
+        let urlQuery = serverUrl + "?limit=100&order=-updatedAt"
         if let url = URL(string: urlQuery) {
             var request = URLRequest(url: url)
+            print(request.url)
             request.addValue(Constants.applicationId, forHTTPHeaderField: Constants.applicationIdKey)
             request.addValue(Constants.parseKey, forHTTPHeaderField: Constants.parseRestApiKey)
             let session = URLSession.shared

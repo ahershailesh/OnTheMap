@@ -17,6 +17,21 @@ class MapSearchViewController: MapViewController {
     let TEXTFIELD_PLACEHOLDER = "Enter Info..."
     let OVERRITE_LOCATION = "Do you want to overrite previous location"
     
+    var showAnnotationsOnly = true
+    
+    var students : [Student] = [] {
+        didSet {
+            if showAnnotationsOnly {
+                let annotation =  students.map { (student) -> MKPointAnnotation in
+                    return student.getAnnotation()
+                }
+                mainThread(block: {
+                    self.mapView.addAnnotations(annotation)
+                })
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(searchTextField)
@@ -27,6 +42,11 @@ class MapSearchViewController: MapViewController {
         
         detailTextField.autocorrectionType = .no
         detailTextField.autocapitalizationType = .none
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        StudentLocationHandler.shared.delegate = self
+        StudentLocationHandler.shared.refresh()
     }
     
     //MARK:- Add Dynamic Views
@@ -235,5 +255,11 @@ extension MapSearchViewController: UITextViewDelegate {
         if textView.text == TEXTFIELD_PLACEHOLDER {
             textView.text = ""
         }
+    }
+}
+
+extension MapSearchViewController: LocationDelegate {
+    func studentLocationListLoaded(studentsInformation: [Student]) {
+        students = studentsInformation
     }
 }

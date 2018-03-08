@@ -45,19 +45,22 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         passwordTextField.text = ""
+        messageLabel.text = ""
     }
     
     private func login(success: Bool) {
             if success {
                 moveToStudentList()
             } else {
+                showAlert(message: LOGIN_FAILED_MESSAGE)
                 messageLabel.text = LOGIN_FAILED_MESSAGE
             }
     }
     
+    
     private func moveToStudentList() {
         
-        if let controller = storyboard?.instantiateViewController(withIdentifier: "StudentListViewController") {
+        if let controller = storyboard?.instantiateViewController(withIdentifier: "TabViewController") {
             let navigationController = UINavigationController(rootViewController: controller)
             present(navigationController, animated: true, completion: nil)
         }

@@ -22,6 +22,7 @@ class StudentListViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        StudentLocationHandler.shared.delegate = self
         handler.refresh()
     }
     
@@ -30,32 +31,10 @@ class StudentListViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         navigationItem.title = "Students"
-        
-        let postLocation = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postLocationPopup))
-        navigationItem.rightBarButtonItem = postLocation
-        
-        let logoutButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(logout))
-        navigationItem.leftBarButtonItem = logoutButton
-    }
-    
-    @objc private func postLocationPopup() {
-        if let controller = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as? MapSearchViewController{
-            let navC = UINavigationController(rootViewController: controller)
-            navigationController?.present(navC, animated: true, completion: {
-                controller.checkWithPreviousLocations()
-            })
-        }
     }
     
     private func register() {
         tableView.register(UINib(nibName: studentCell, bundle: nil), forCellReuseIdentifier: studentCell)
-    }
-
-    @objc private func logout() {
-        AuthenticationHandler.shared.deAuthenticate { [weak self] (success, _, _) in
-            appDelegate.loggedInStudent.objectId = nil
-            self?.dismiss(animated: true, completion: nil)
-        }
     }
     
     private func reloadData() {

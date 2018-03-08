@@ -33,12 +33,4 @@ class StudentLocationHandler: NSObject {
     func refresh() {
         fetchLocations()
     }
-
-    func getLocations() {
-        guard let locations = studentInformation else {
-            fetchLocations()
-            return
-        }
-        delegate?.studentLocationListLoaded(studentsInformation: locations)
-    }
 }
