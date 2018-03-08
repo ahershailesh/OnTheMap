@@ -31,6 +31,7 @@ class StudentTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         title.text = nil
         subTitle.text = nil
         link.text = nil
