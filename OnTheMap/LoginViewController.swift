@@ -23,10 +23,10 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
         userNameTextField.resignFirstResponder()
         passwordTextField.resignFirstResponder()
         moveTextDown()
-       
+        
         
         AuthenticationHandler.shared.authenticate(username: userNameTextField.text!, password: passwordTextField.text!) {(success, response, error) in
-             mainThread {
+            mainThread {
                 self.login(success: success)
                 if let json = response as? [String: [String : Any]] {
                     appDelegate.loggedInStudent.uniqueKey = json["account"]?["key"] as? String ?? ""
@@ -44,17 +44,18 @@ class LoginViewController : UIViewController, UITextFieldDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         passwordTextField.text = ""
         messageLabel.text = ""
     }
     
     private func login(success: Bool) {
-            if success {
-                moveToStudentList()
-            } else {
-                showAlert(message: LOGIN_FAILED_MESSAGE)
-                messageLabel.text = LOGIN_FAILED_MESSAGE
-            }
+        if success {
+            moveToStudentList()
+        } else {
+            showAlert(message: LOGIN_FAILED_MESSAGE)
+            messageLabel.text = LOGIN_FAILED_MESSAGE
+        }
     }
     
     

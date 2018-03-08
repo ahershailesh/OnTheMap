@@ -9,21 +9,27 @@
 import UIKit
 
 class StudentListViewController: UIViewController {
-
+    
     @IBOutlet weak var tableView: UITableView!
-    var studentsArray = [Student]()
     let handler = StudentLocationHandler.shared
     
     let studentCell = "StudentTableViewCell"
     override func viewDidLoad() {
         setUI()
-        handler.delegate = self
-        handler.refresh()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
-        StudentLocationHandler.shared.delegate = self
-        handler.refresh()
+        super.viewWillAppear(animated)
+        fetchLocation()
+    }
+    
+    private func fetchLocation() {
+        StudentLocationHandler.shared.fetchLocations { (success, response, error) in
+            if !success {
+                self.show(error: error)
+                self.reloadData()
+            }
+        }
     }
     
     private func setUI() {
@@ -43,13 +49,6 @@ class StudentListViewController: UIViewController {
         }
     }
     
-}
-
-extension StudentListViewController : LocationDelegate {
-    
-    func studentLocationListLoaded(studentsInformation: [Student]) {
-        reloadData()
-    }
 }
 
 extension StudentListViewController : UITableViewDataSource {
@@ -74,15 +73,16 @@ extension StudentListViewController : UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let student = handler.studentInformation?[indexPath.row] {
-            if let controller = storyboard?.instantiateViewController(withIdentifier: "MapViewController") as? MapViewController{
-                controller.locationBlock = {
-                    return student.getAnnotation()
+        if let student = handler.studentInformation?[indexPath.row], let url = URL(string: student.mediaURL ?? "") {
+            UIApplication.shared.open(url, options: [:], completionHandler: { (success) in
+                if !success {
+                    self.showAlert(message: Constants.URL_ERROR)
                 }
-                navigationController?.pushViewController(controller, animated: true)
-            }
+            })
+        } else {
+            showAlert(message: Constants.URL_ERROR)
         }
     }
-
+    
 }
 

@@ -20,6 +20,8 @@ struct Constants {
     static let applicationIdKey = "X-Parse-Application-Id"
     static let parseRestApiKey = "X-Parse-REST-API-Key"
     
+    static let URL_ERROR = "Sorry cannot able to open url provided URL"
+    
     
     //MARK:- Enums
     //MARK:-

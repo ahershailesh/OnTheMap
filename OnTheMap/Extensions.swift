@@ -88,7 +88,7 @@ extension UIViewController {
                 
             case URLError.Code.cannotFindHost:
                 return Constants.ErrorCode.ServerNotFound
-            
+                
             default:
                 return Constants.ErrorCode.None
             }

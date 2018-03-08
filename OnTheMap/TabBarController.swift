@@ -9,7 +9,7 @@
 import UIKit
 
 class TabBarController: UITabBarController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,7 +19,7 @@ class TabBarController: UITabBarController {
         let postLocation = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(postLocationPopup))
         navigationItem.rightBarButtonItem = postLocation
     }
-
+    
     @objc private func logout() {
         AuthenticationHandler.shared.deAuthenticate { [weak self] (success, _, _) in
             appDelegate.loggedInStudent.objectId = nil

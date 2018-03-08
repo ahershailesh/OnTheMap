@@ -42,6 +42,6 @@ class StudentTableViewCell: UITableViewCell {
         photoView.backgroundColor = randomColor
         shortFormLabel.textColor = randomColor.isLight() ? UIColor.black : UIColor.white
         photoView.layer.cornerRadius = photoView.frame.width/2
-
+        
     }
 }

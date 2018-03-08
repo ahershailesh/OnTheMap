@@ -34,7 +34,7 @@ class AuthenticationHandler: NSObject {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             var authData = ""
             if let jsonString = dictionary.json() {
-                 authData = ["udacity" : jsonString].json() ?? ""
+                authData = ["udacity" : jsonString].json() ?? ""
             }
             request.httpBody = authData.data(using: .utf8)
             let session = URLSession.shared

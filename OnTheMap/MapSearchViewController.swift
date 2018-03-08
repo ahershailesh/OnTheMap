@@ -45,8 +45,18 @@ class MapSearchViewController: MapViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        StudentLocationHandler.shared.delegate = self
-        StudentLocationHandler.shared.refresh()
+        super.viewWillAppear(animated)
+        fetchLocation()
+    }
+    
+    private func fetchLocation() {
+        StudentLocationHandler.shared.fetchLocations { (success, response, error) in
+            if success, let array = response as? [Student] {
+                self.students = array
+            } else {
+                self.show(error: error)
+            }
+        }
     }
     
     //MARK:- Add Dynamic Views
@@ -70,7 +80,7 @@ class MapSearchViewController: MapViewController {
         ParseHandler.shared.getStudentLocation(dict: ["uniqueKey" : uniqueKey]) { (suceess, response, error) in
             if let responseArray = response as? [Any] {
                 if responseArray.isEmpty {
-                   self.addSearchView()
+                    self.addSearchView()
                 } else {
                     self.showAlert()
                     if let location = responseArray.first as? [String: String] {
@@ -201,9 +211,9 @@ class MapSearchViewController: MapViewController {
     
     private func preparePostLocationData() {
         let uniqueKey = appDelegate.loggedInStudent.uniqueKey ?? ""
-        ParseHandler.shared.getStudentInfo(uniqueKey: uniqueKey) { (success, response, _) in
+        ParseHandler.shared.getStudentInfo(uniqueKey: uniqueKey) { (success, response, error) in
             mainThread {
-                if let dict = response as? [String: Any] {
+                if success, let dict = response as? [String: Any] {
                     appDelegate.loggedInStudent.lastName = dict["last_name"] as? String
                     appDelegate.loggedInStudent.firstName = dict["first_name"] as? String
                     if let objectId = appDelegate.loggedInStudent.objectId {
@@ -211,6 +221,8 @@ class MapSearchViewController: MapViewController {
                     } else {
                         self.postLocation(student: appDelegate.loggedInStudent)
                     }
+                } else {
+                    self.show(error: error)
                 }
             }
         }
@@ -226,7 +238,7 @@ class MapSearchViewController: MapViewController {
     }
     
     private func updateLocation(objectId : String, student: Student) {
-         let dict = student.getParamDictionary()
+        let dict = student.getParamDictionary()
         ParseHandler.shared.updateLocation(objectId: objectId, paramDict: dict) { (success, response, _) in
             
         }
@@ -255,11 +267,5 @@ extension MapSearchViewController: UITextViewDelegate {
         if textView.text == TEXTFIELD_PLACEHOLDER {
             textView.text = ""
         }
-    }
-}
-
-extension MapSearchViewController: LocationDelegate {
-    func studentLocationListLoaded(studentsInformation: [Student]) {
-        students = studentsInformation
     }
 }
