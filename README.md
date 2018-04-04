@@ -1,6 +1,6 @@
 # On the map
 
-This is the udacity project which allow you to store and update your location.
+This is the udacity nano degree  project which allow you to store and update your location, allows you to see recent 100 locations of udacity students who have saved their location just like you.
 
 ## Working
 1. Login with udacity login
